@@ -1,0 +1,187 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >0.8.0 <= 0.9.9;
+// pragma solidity 0.8.7;
+
+contract SoliditySmartContract{
+
+    uint8 public posNumber = 255;
+    int8 public number = -15;
+    bool public han = true;
+    address public home = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    string public greet = "Assalam Blockchain people";
+
+    string public num; 
+
+    //state variable 
+    int public x;
+
+    uint256 public constant CONSTVALUE = 100;
+    
+    // uint public immutable IMM_OWNER;
+
+    address public immutable OWNERADDRESS;
+
+
+    constructor (address _address) {
+        OWNERADDRESS = _address;
+    }
+
+    function global() external view returns(address,uint,uint){
+        address sender = msg.sender;
+        uint blockNum = block.number;
+        uint blockDiff = block.difficulty;
+
+        return(sender, blockNum, blockDiff);
+    }
+
+    //state variables 
+
+    uint public stateVariable;
+
+    function writeStateVariable(uint value) external {
+        stateVariable = value;
+    }
+
+    //local variables example
+
+    function addTwoNumbers(uint num1, uint num2) external pure returns(uint){
+        return(num1+num2);
+    }
+
+    //functions
+
+    function exampleFunc(uint value) public pure returns(uint){
+        return value * value;
+    }
+
+    function multipleRetrunsFunc() public view returns(uint, bool, address){
+        return (stateVariable, true, msg.sender);
+    }
+
+    function multipleDesc() public pure returns(uint u, bool b, int z){
+        u = 5;
+        b = true;
+        z = 1;
+    }
+
+    function destructure() public view returns(uint, bool, address){
+        (uint a, bool b, address c) = multipleRetrunsFunc();
+        return (a,b,c);
+    }
+
+// View and Pure Functions
+// In View function: we can only read state variable and not write
+// in Pure function: we can neither read nor write state variables
+// In transaction function: we can write state variable.
+
+//view function
+    function viewFunc() public view returns(int8){
+        return number;
+    }
+
+    //pure function
+    function pureFunc(uint a, uint b) public pure returns(uint){
+        return a+b;
+    }
+
+    //transaction function
+    function transFunc() public returns(int){
+        x = 10;
+        return x;
+    }
+
+
+
+
+}
+
+contract accessModifierExampleA{
+// Access Modifiers: scope accessiblity
+// internal: can access only inside the contract and derive contract
+// external : can access only from outside of contract
+// public : can access from every where
+// private : can access only inside the contract
+// By default variables are internal
+// only use in state variables and functions
+// external can only be used with functions
+
+    uint internal accessModifer = 100;
+    
+    uint private privateAccessModifer = 100;
+
+    uint public externalAccessModifier = 10;
+
+    function accessInternal() external view returns(uint){
+        return accessModifer;
+    }
+
+}
+
+contract B is accessModifierExampleA{
+    uint public accessPrivate = accessModifer;
+}
+
+contract ConditionalStatement {
+
+    function requireFunc(uint num ) external pure returns(uint){
+        require(num>10,"Number is less than 10");
+        return num;
+    }
+
+    function getGrade(uint percentage) external pure returns(string memory){
+        if(percentage >= 90 ){
+            return string(bytes.concat(bytes("Your Percentage"), bytes(" is equal to A+ Grade!")));
+        }else if(percentage >= 80 && percentage < 90){
+            return "A";
+        }else if(percentage >= 70 && percentage < 80){
+            return "B+";
+        }else if(percentage >= 60 && percentage < 70){
+            return "B";
+        }else if(percentage >= 50 && percentage < 60){
+            return "C";
+        }else {
+            return "Fail!";
+        }
+    }
+
+    function ternaryExample(int percentage) external pure returns(string memory){
+        //condition ? when true : when false
+        return percentage > 50  ? "You Passed" : "Oop Failed";
+    }
+
+}
+
+// Function Modifier
+// Modifiers can be used to:
+// Restrict access
+// Validate inputs
+// Guard against reentrancy hack
+// modifier is used to reuse the code,
+// it can be used by three ways
+//  without argument
+// with argument
+// sandwhich
+
+
+contract FunctionModifier{
+
+        address public ownerAddress = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+
+        modifier onlyOwner(){
+            require(msg.sender == ownerAddress,"You are not owner you can not access at all...");
+            _;
+        }
+
+        modifier inputValidation(uint num){
+            require(num == 10,"Input number is not ten");
+            _;
+        }
+
+        function secret(uint number) external view onlyOwner inputValidation(number) returns(address){
+            return ownerAddress;
+        }
+
+
+    }
+
